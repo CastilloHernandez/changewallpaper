@@ -2,20 +2,15 @@
 
 # Rutas y variables de configuración
 inifile="/home/emmanuel/changewallpaper.ini"
-schema="org.gnome.desktop.background"
+schema="org.cinnamon.desktop.background"
 key="picture-uri"
 options="picture-options"
 folder="/home/emmanuel/Pictures/Papel tapiz"
 
-user=$(whoami)
+PID=$(pgrep -fo cinnamon-session)
 
-fl=$(find /proc -maxdepth 2 -user $user -name environ -print -quit)
-while [ -z $(grep -z DBUS_SESSION_BUS_ADDRESS "$fl" | cut -d= -f2- | tr -d '\000' ) ]
-do
-  fl=$(find /proc -maxdepth 2 -user $user -name environ -newer "$fl" -print -quit)
-done
+export DBUS_SESSION_BUS_ADDRESS=$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$PID/environ | tr -d '\0' | cut -d= -f2-)
 
-export DBUS_SESSION_BUS_ADDRESS=$(grep -z DBUS_SESSION_BUS_ADDRESS "$fl" | cut -d= -f2-)
 
 # Leer el número de archivo actual desde el archivo de configuración
 if [[ -f "$inifile" ]]; then
